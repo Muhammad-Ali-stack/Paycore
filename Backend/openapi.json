@@ -1,0 +1,7224 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database or Redis unavailable"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/verify-phone": {
+      "post": {
+        "operationId": "AuthController_verifyPhone",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPhoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyPhoneResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/otp/resend": {
+      "post": {
+        "operationId": "AuthController_resend",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpSentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPairDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPairDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/password/forgot": {
+      "post": {
+        "operationId": "AuthController_forgot",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpSentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/password/reset": {
+      "post": {
+        "operationId": "AuthController_reset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Session revoked"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/sessions": {
+      "get": {
+        "operationId": "AuthController_sessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/sessions/{id}": {
+      "delete": {
+        "operationId": "AuthController_revokeSession",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Session revoked"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/pin": {
+      "post": {
+        "operationId": "AuthController_setPin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPinDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinSetResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      },
+      "put": {
+        "operationId": "AuthController_changePin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePinDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinSetResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/users/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/lookup": {
+      "get": {
+        "operationId": "UsersController_lookup",
+        "parameters": [
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "description": "A phone number in E.164 (`+923001234567`, URL-encode the `+` as %2B) or a username (`@ali_k` or `ali_k`)",
+            "schema": {
+              "minLength": 3,
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLookupDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Find someone to pay by phone or @username. Returns only a masked phone and a short display\nname. Rate-limited more strictly than other reads to slow down enumeration.",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/admin/users": {
+      "get": {
+        "operationId": "AdminUsersController_find",
+        "parameters": [
+          {
+            "name": "phone",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "pattern": "^\\+[1-9]\\d{7,14}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / users"
+        ]
+      }
+    },
+    "/v1/admin/users/{id}": {
+      "get": {
+        "operationId": "AdminUsersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / users"
+        ]
+      }
+    },
+    "/v1/admin/users/{id}/suspend": {
+      "post": {
+        "operationId": "AdminUsersController_suspend",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuspendUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / users"
+        ]
+      }
+    },
+    "/v1/admin/users/{id}/reactivate": {
+      "post": {
+        "operationId": "AdminUsersController_reactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / users"
+        ]
+      }
+    },
+    "/v1/kyc/me": {
+      "get": {
+        "operationId": "KycController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycMeDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Current tier, its limits, and recent submissions.",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/v1/kyc/tiers": {
+      "get": {
+        "operationId": "KycController_tiers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TierLimitDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Limits for every tier (for \"upgrade to unlock\" UX).",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/v1/kyc/submissions": {
+      "post": {
+        "operationId": "KycController_submit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitKycDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycSubmissionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/v1/admin/kyc/submissions": {
+      "get": {
+        "operationId": "AdminKycController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KycSubmissionDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / kyc"
+        ]
+      }
+    },
+    "/v1/admin/kyc/submissions/{id}/approve": {
+      "post": {
+        "operationId": "AdminKycController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveKycDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycSubmissionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / kyc"
+        ]
+      }
+    },
+    "/v1/admin/kyc/submissions/{id}/reject": {
+      "post": {
+        "operationId": "AdminKycController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectKycDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycSubmissionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / kyc"
+        ]
+      }
+    },
+    "/v1/admin/kyc/users/{userId}/audit": {
+      "get": {
+        "operationId": "AdminKycController_audit",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KycAuditLogDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / kyc"
+        ]
+      }
+    },
+    "/v1/admin/ledger/system-accounts": {
+      "get": {
+        "operationId": "LedgerAdminController_systemAccounts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LedgerAccountDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / ledger"
+        ]
+      }
+    },
+    "/v1/admin/ledger/accounts/{id}": {
+      "get": {
+        "operationId": "LedgerAdminController_account",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerAccountDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / ledger"
+        ]
+      }
+    },
+    "/v1/admin/ledger/entries/{id}": {
+      "get": {
+        "operationId": "LedgerAdminController_entry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / ledger"
+        ]
+      }
+    },
+    "/v1/admin/ledger/entries/{id}/reversals": {
+      "post": {
+        "operationId": "LedgerAdminController_reverse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReverseEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / ledger"
+        ]
+      }
+    },
+    "/v1/admin/ledger/integrity": {
+      "get": {
+        "operationId": "LedgerAdminController_integrity",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrityReportDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / ledger"
+        ]
+      }
+    },
+    "/v1/wallets": {
+      "post": {
+        "operationId": "WalletsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWalletDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "wallets"
+        ]
+      },
+      "get": {
+        "operationId": "WalletsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WalletDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/v1/wallets/{id}": {
+      "get": {
+        "operationId": "WalletsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/v1/wallets/{id}/transactions": {
+      "get": {
+        "operationId": "WalletsController_history",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletHistoryPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/v1/wallets/{id}/deposits": {
+      "post": {
+        "operationId": "WalletsController_deposit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Simulated synchronous top-up (phase-1 sandbox rail; use POST /funding/topups for the async bank flow).",
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/v1/wallets/{id}/withdrawals": {
+      "post": {
+        "operationId": "WalletsController_withdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Synchronous sandbox withdrawal (phase 1; use POST /funding/withdrawals for the async bank flow).",
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/v1/fx/rates": {
+      "get": {
+        "operationId": "FxController_rates_",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxRatesTableDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "fx"
+        ]
+      }
+    },
+    "/v1/fx/quotes": {
+      "post": {
+        "operationId": "FxController_quote",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxQuoteDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "fx"
+        ]
+      }
+    },
+    "/v1/fx/conversions": {
+      "post": {
+        "operationId": "FxController_convert",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteConversionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversionResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "fx"
+        ]
+      }
+    },
+    "/v1/admin/wallets/{id}": {
+      "get": {
+        "operationId": "AdminWalletsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminWalletDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / wallets"
+        ]
+      }
+    },
+    "/v1/admin/wallets/{id}/status": {
+      "post": {
+        "operationId": "AdminWalletsController_setStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetWalletStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / wallets"
+        ]
+      }
+    },
+    "/v1/fees": {
+      "get": {
+        "operationId": "FeesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeeRuleDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "fees"
+        ]
+      }
+    },
+    "/v1/payments/{id}": {
+      "get": {
+        "operationId": "PaymentsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/v1/transfers/quotes": {
+      "post": {
+        "operationId": "TransfersController_quote",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransferQuoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferQuoteDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ]
+      }
+    },
+    "/v1/transfers": {
+      "post": {
+        "operationId": "TransfersController_transfer",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ]
+      }
+    },
+    "/v1/payment-requests": {
+      "post": {
+        "operationId": "PaymentRequestsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payment requests"
+        ]
+      },
+      "get": {
+        "operationId": "PaymentRequestsController_list",
+        "parameters": [
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "INCOMING",
+                "OUTGOING"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "EXPIRED",
+                "ACCEPTED",
+                "DECLINED",
+                "CANCELLED"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequestPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payment requests"
+        ]
+      }
+    },
+    "/v1/payment-requests/{id}/accept": {
+      "post": {
+        "operationId": "PaymentRequestsController_accept",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptPaymentRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payment requests"
+        ]
+      }
+    },
+    "/v1/payment-requests/{id}/decline": {
+      "post": {
+        "operationId": "PaymentRequestsController_decline",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payment requests"
+        ]
+      }
+    },
+    "/v1/payment-requests/{id}/cancel": {
+      "post": {
+        "operationId": "PaymentRequestsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "payment requests"
+        ]
+      }
+    },
+    "/v1/qr/receive": {
+      "post": {
+        "operationId": "QrController_receive",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReceiveQrDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiveQrDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "qr"
+        ]
+      }
+    },
+    "/v1/qr/resolve": {
+      "post": {
+        "operationId": "QrController_resolve",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveQrDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QrPreviewDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "qr"
+        ]
+      }
+    },
+    "/v1/qr/pay": {
+      "post": {
+        "operationId": "QrController_pay",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayQrDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "qr"
+        ]
+      }
+    },
+    "/v1/merchants": {
+      "post": {
+        "operationId": "MerchantOnboardingController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchants"
+        ]
+      }
+    },
+    "/v1/merchant/me": {
+      "get": {
+        "operationId": "MerchantController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/dashboard": {
+      "get": {
+        "operationId": "MerchantController_dashboard",
+        "parameters": [
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PKR",
+                "AED",
+                "USD"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDashboardDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/outlets": {
+      "get": {
+        "operationId": "MerchantController_outlets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutletDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      },
+      "post": {
+        "operationId": "MerchantController_createOutlet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOutletDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutletDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/outlets/{id}/terminals": {
+      "get": {
+        "operationId": "MerchantController_terminals",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TerminalDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      },
+      "post": {
+        "operationId": "MerchantController_createTerminal",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTerminalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerminalDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/qr/dynamic": {
+      "post": {
+        "operationId": "MerchantController_dynamicQr",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDynamicQrDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicQrDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/qr/{qrId}": {
+      "get": {
+        "operationId": "MerchantController_qr",
+        "parameters": [
+          {
+            "name": "qrId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicQrDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/payments": {
+      "get": {
+        "operationId": "MerchantController_payments",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "COMPLETED",
+                "CREATED",
+                "PROCESSING",
+                "FAILED",
+                "REVERSED",
+                "PARTIALLY_REFUNDED",
+                "REFUNDED"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Matches the payment reference or id",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantPaymentPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/payments/{id}": {
+      "get": {
+        "operationId": "MerchantController_payment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantPaymentDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/payments/{id}/refunds": {
+      "post": {
+        "operationId": "MerchantController_refund",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefundDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefundDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/admin/merchants": {
+      "get": {
+        "operationId": "AdminMerchantsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "SUSPENDED",
+                "PENDING_REVIEW"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / merchants"
+        ]
+      }
+    },
+    "/v1/admin/merchants/{id}/pricing": {
+      "put": {
+        "operationId": "AdminMerchantsController_pricing",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPricingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / merchants"
+        ]
+      }
+    },
+    "/v1/admin/merchants/{id}/approve": {
+      "post": {
+        "operationId": "AdminMerchantsController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / merchants"
+        ]
+      }
+    },
+    "/v1/admin/merchants/{id}/suspend": {
+      "post": {
+        "operationId": "AdminMerchantsController_suspend",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / merchants"
+        ]
+      }
+    },
+    "/v1/funding/topups": {
+      "post": {
+        "operationId": "FundingController_topup",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundingTransactionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "funding"
+        ]
+      }
+    },
+    "/v1/funding/withdrawals": {
+      "post": {
+        "operationId": "FundingController_withdraw",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key (8-128 chars, [A-Za-z0-9_.:-]) per logical operation. Retries with the same key and payload replay the original response.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWithdrawalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundingTransactionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "funding"
+        ]
+      }
+    },
+    "/v1/funding/transactions": {
+      "get": {
+        "operationId": "FundingController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FAILED",
+                "REVERSED",
+                "PENDING",
+                "SUCCEEDED"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundingPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "funding"
+        ]
+      }
+    },
+    "/v1/funding/transactions/{id}": {
+      "get": {
+        "operationId": "FundingController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundingTransactionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "funding"
+        ]
+      }
+    },
+    "/v1/webhooks/bank": {
+      "post": {
+        "operationId": "BankWebhooksController_receive",
+        "parameters": [
+          {
+            "name": "X-PayCore-Signature",
+            "in": "header",
+            "description": "t=<unix seconds>,v1=<hex HMAC-SHA256 of \"<t>.<raw body>\">",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookReceiptDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
+    "/v1/admin/reconciliation/runs": {
+      "get": {
+        "operationId": "AdminReconciliationController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationRunPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / reconciliation"
+        ]
+      },
+      "post": {
+        "operationId": "AdminReconciliationController_run",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunReconciliationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationRunDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / reconciliation"
+        ]
+      }
+    },
+    "/v1/admin/reconciliation/runs/{id}": {
+      "get": {
+        "operationId": "AdminReconciliationController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationRunDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / reconciliation"
+        ]
+      }
+    },
+    "/v1/dev/bank/simulate": {
+      "post": {
+        "operationId": "DevBankController_simulate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateBankDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResultDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "dev"
+        ]
+      }
+    },
+    "/v1/merchant/settlements": {
+      "get": {
+        "operationId": "MerchantSettlementsController_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/settlements/{id}": {
+      "get": {
+        "operationId": "MerchantSettlementsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/merchant/settlements/{id}/report.csv": {
+      "get": {
+        "operationId": "MerchantSettlementsController_report",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV settlement report",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "merchant"
+        ]
+      }
+    },
+    "/v1/admin/settlements/run": {
+      "post": {
+        "operationId": "AdminSettlementsController_run",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSettlementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementRunDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "admin / settlements"
+        ]
+      }
+    },
+    "/v1/transactions": {
+      "get": {
+        "operationId": "ActivityController_feed",
+        "parameters": [
+          {
+            "name": "walletId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PKR",
+                "AED",
+                "USD"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "P2P",
+                "P2P_FX",
+                "REQUEST",
+                "QR_MERCHANT",
+                "QR_P2P",
+                "REFUND",
+                "TOPUP",
+                "WITHDRAWAL",
+                "DEPOSIT",
+                "TRANSFER",
+                "FX_CONVERSION",
+                "REVERSAL",
+                "ADJUSTMENT"
+              ]
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN",
+                "OUT"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "ISO-8601, inclusive",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "ISO-8601, exclusive",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search over descriptions",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "activity"
+        ]
+      }
+    },
+    "/v1/transactions/statement": {
+      "get": {
+        "operationId": "ActivityController_statement",
+        "parameters": [
+          {
+            "name": "walletId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Only csv for now (PDF comes later)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "csv"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV statement",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "activity"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "PayCore API",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "HealthDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "db": {
+            "type": "string",
+            "enum": [
+              "up"
+            ]
+          },
+          "redis": {
+            "type": "string",
+            "enum": [
+              "up"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "db",
+          "redis"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "role": {
+            "type": "string",
+            "description": "ADMIN accounts cannot self-register.",
+            "enum": [
+              "CONSUMER",
+              "MERCHANT"
+            ]
+          }
+        },
+        "required": [
+          "phone",
+          "password",
+          "fullName"
+        ]
+      },
+      "RegisterResponseDto": {
+        "type": "object",
+        "properties": {
+          "devOtp": {
+            "type": "string",
+            "description": "Only when OTP_DEV_ECHO=true (never in production)"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "otpExpiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "otpExpiresAt"
+        ]
+      },
+      "VerifyPhoneDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$"
+          }
+        },
+        "required": [
+          "phone",
+          "code"
+        ]
+      },
+      "VerifyPhoneResponseDto": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "verified"
+        ]
+      },
+      "ResendOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "OtpSentResponseDto": {
+        "type": "object",
+        "properties": {
+          "otpExpiresAt": {
+            "type": "string"
+          },
+          "devOtp": {
+            "type": "string",
+            "description": "Only when OTP_DEV_ECHO=true (never in production)"
+          },
+          "sent": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sent"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Stable client-generated device identifier.",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "deviceName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "phone",
+          "password",
+          "deviceId"
+        ]
+      },
+      "TokenPairDto": {
+        "type": "object",
+        "properties": {
+          "tokenType": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "accessTokenExpiresIn": {
+            "type": "number",
+            "description": "seconds"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "refreshTokenExpiresAt": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tokenType",
+          "accessToken",
+          "accessTokenExpiresIn",
+          "refreshToken",
+          "refreshTokenExpiresAt",
+          "sessionId"
+        ]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "code",
+          "newPassword"
+        ]
+      },
+      "ResetPasswordResponseDto": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "reset"
+        ]
+      },
+      "SessionDto": {
+        "type": "object",
+        "properties": {
+          "deviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "deviceName",
+          "userAgent",
+          "ipAddress",
+          "id",
+          "deviceId",
+          "createdAt",
+          "lastUsedAt",
+          "current"
+        ]
+      },
+      "SetPinDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "Current account password, to prove possession before setting a PIN.",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "pin"
+        ]
+      },
+      "PinSetResponseDto": {
+        "type": "object",
+        "properties": {
+          "pinSet": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "pinSet"
+        ]
+      },
+      "ChangePinDto": {
+        "type": "object",
+        "properties": {
+          "currentPin": {
+            "type": "string"
+          },
+          "newPin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currentPin",
+          "newPin"
+        ]
+      },
+      "Role": {
+        "type": "string",
+        "enum": [
+          "CONSUMER",
+          "MERCHANT",
+          "ADMIN"
+        ]
+      },
+      "UserStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING_VERIFICATION",
+          "ACTIVE",
+          "SUSPENDED"
+        ]
+      },
+      "KycTier": {
+        "type": "string",
+        "enum": [
+          "TIER_0",
+          "TIER_1",
+          "TIER_2",
+          "TIER_3"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserStatus"
+              }
+            ]
+          },
+          "kycTier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "phoneVerified": {
+            "type": "boolean"
+          },
+          "pinSet": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "role",
+          "status",
+          "kycTier",
+          "id",
+          "phone",
+          "fullName",
+          "phoneVerified",
+          "pinSet",
+          "createdAt"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "username": {
+            "type": "string",
+            "description": "3-20 chars of [a-z0-9_]; case-insensitive (stored lower-case) and unique."
+          }
+        }
+      },
+      "Currency": {
+        "type": "string",
+        "enum": [
+          "PKR",
+          "AED",
+          "USD"
+        ],
+        "description": "Currencies the user can receive in (active wallets)"
+      },
+      "UserLookupDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "wallets": {
+            "type": "array",
+            "description": "Currencies the user can receive in (active wallets)",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
+          },
+          "userId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "First name and last initial, e.g. \"Ali K.\""
+          },
+          "phoneMasked": {
+            "type": "string",
+            "description": "e.g. \"+92300****567\""
+          }
+        },
+        "required": [
+          "username",
+          "wallets",
+          "userId",
+          "displayName",
+          "phoneMasked"
+        ]
+      },
+      "SuspendUserDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "MoneyDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "description": "Decimal string in major units, e.g. \"1250.50\"",
+            "example": "1250.50"
+          },
+          "amountMinor": {
+            "type": "string",
+            "description": "Integer minor units as a string, e.g. \"125050\"",
+            "example": "125050"
+          }
+        },
+        "required": [
+          "currency",
+          "amount",
+          "amountMinor"
+        ]
+      },
+      "TierLimitDto": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "permitted": {
+            "type": "boolean"
+          },
+          "perTransaction": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "daily": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "monthly": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "maxBalance": {
+            "$ref": "#/components/schemas/MoneyDto"
+          }
+        },
+        "required": [
+          "tier",
+          "currency",
+          "permitted",
+          "perTransaction",
+          "daily",
+          "monthly",
+          "maxBalance"
+        ]
+      },
+      "KycSubmissionStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "APPROVED",
+          "REJECTED"
+        ]
+      },
+      "KycDocumentType": {
+        "type": "string",
+        "enum": [
+          "CNIC",
+          "PASSPORT",
+          "EMIRATES_ID",
+          "DRIVING_LICENSE",
+          "BUSINESS_REGISTRATION"
+        ]
+      },
+      "KycSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "targetTier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycSubmissionStatus"
+              }
+            ]
+          },
+          "documentType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycDocumentType"
+              }
+            ]
+          },
+          "documentRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessName": {
+            "type": "string",
+            "nullable": true
+          },
+          "verificationResult": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "reviewedById": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "documentNumberLast4": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "targetTier",
+          "status",
+          "documentType",
+          "documentRef",
+          "businessName",
+          "verificationResult",
+          "reviewedById",
+          "reviewedAt",
+          "rejectionReason",
+          "id",
+          "userId",
+          "documentNumberLast4",
+          "createdAt"
+        ]
+      },
+      "KycMeDto": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TierLimitDto"
+            }
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KycSubmissionDto"
+            }
+          }
+        },
+        "required": [
+          "tier",
+          "limits",
+          "submissions"
+        ]
+      },
+      "SubmitKycDto": {
+        "type": "object",
+        "properties": {
+          "targetTier": {
+            "type": "string",
+            "enum": [
+              "TIER_1",
+              "TIER_2",
+              "TIER_3"
+            ]
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "CNIC",
+              "PASSPORT",
+              "EMIRATES_ID",
+              "DRIVING_LICENSE",
+              "BUSINESS_REGISTRATION"
+            ]
+          },
+          "documentNumber": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 40
+          },
+          "documentRef": {
+            "type": "string",
+            "description": "Reference to an uploaded document image in object storage.",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "address": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 300
+          },
+          "businessName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "targetTier",
+          "documentType",
+          "documentNumber"
+        ]
+      },
+      "ApproveKycDto": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "RejectKycDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "KycAuditLogDto": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "actorId": {
+            "type": "string",
+            "nullable": true,
+            "description": "null = SYSTEM (automated decision)"
+          },
+          "fromTier": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "toTier": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KycTier"
+              }
+            ]
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "submissionId",
+          "actorId",
+          "fromTier",
+          "toTier",
+          "details",
+          "id",
+          "userId",
+          "action",
+          "createdAt"
+        ]
+      },
+      "AccountType": {
+        "type": "string",
+        "enum": [
+          "ASSET",
+          "LIABILITY",
+          "EQUITY",
+          "REVENUE",
+          "EXPENSE"
+        ]
+      },
+      "NormalBalance": {
+        "type": "string",
+        "enum": [
+          "DEBIT",
+          "CREDIT"
+        ]
+      },
+      "AccountOwnerType": {
+        "type": "string",
+        "enum": [
+          "SYSTEM",
+          "WALLET",
+          "MERCHANT"
+        ]
+      },
+      "LedgerAccountDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountType"
+              }
+            ]
+          },
+          "normalBalance": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NormalBalance"
+              }
+            ]
+          },
+          "ownerType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountOwnerType"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "balance": {
+            "description": "Cached balance on the account's normal side",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "type",
+          "normalBalance",
+          "ownerType",
+          "currency",
+          "id",
+          "name",
+          "balance",
+          "version"
+        ]
+      },
+      "LedgerAccountDetailDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountType"
+              }
+            ]
+          },
+          "normalBalance": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NormalBalance"
+              }
+            ]
+          },
+          "ownerType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountOwnerType"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "balance": {
+            "description": "Cached balance on the account's normal side",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "version": {
+            "type": "number"
+          },
+          "derivedBalance": {
+            "description": "Recomputed from postings (source of truth)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "type",
+          "normalBalance",
+          "ownerType",
+          "currency",
+          "id",
+          "name",
+          "balance",
+          "version",
+          "derivedBalance"
+        ]
+      },
+      "EntryType": {
+        "type": "string",
+        "enum": [
+          "DEPOSIT",
+          "WITHDRAWAL",
+          "TRANSFER",
+          "FX_CONVERSION",
+          "REVERSAL",
+          "ADJUSTMENT",
+          "PAYMENT",
+          "REFUND",
+          "TOPUP",
+          "WITHDRAWAL_HOLD",
+          "WITHDRAWAL_PAYOUT",
+          "SETTLEMENT",
+          "SETTLEMENT_PAYOUT"
+        ]
+      },
+      "PostingDto": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": [
+              "DEBIT",
+              "CREDIT"
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "string"
+          },
+          "balanceAfter": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction",
+          "currency",
+          "id",
+          "accountId",
+          "amount",
+          "amountMinor",
+          "balanceAfter"
+        ]
+      },
+      "JournalEntryDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntryType"
+              }
+            ]
+          },
+          "reversalOfId": {
+            "type": "string",
+            "nullable": true
+          },
+          "initiatedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "postings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostingDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "reversalOfId",
+          "initiatedBy",
+          "metadata",
+          "postings",
+          "id",
+          "description",
+          "createdAt"
+        ]
+      },
+      "ReverseEntryDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Why the entry is being reversed (kept on the reversal entry for audit).",
+            "minLength": 5,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "UnbalancedEntryDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "entryId": {
+            "type": "string"
+          },
+          "net": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "entryId",
+          "net"
+        ]
+      },
+      "NetByCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "net": {
+            "type": "string"
+          },
+          "postings": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "net",
+          "postings"
+        ]
+      },
+      "BalanceMismatchDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "cached": {
+            "type": "string"
+          },
+          "derived": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "cached",
+          "derived"
+        ]
+      },
+      "TrialBalanceDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "debitNormal": {
+            "type": "string"
+          },
+          "creditNormal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "debitNormal",
+          "creditNormal"
+        ]
+      },
+      "IntegrityReportDto": {
+        "type": "object",
+        "properties": {
+          "unbalancedEntries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbalancedEntryDto"
+            }
+          },
+          "netByCurrency": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetByCurrencyDto"
+            }
+          },
+          "balanceCacheMismatches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BalanceMismatchDto"
+            }
+          },
+          "trialBalance": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceDto"
+            }
+          },
+          "healthy": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "unbalancedEntries",
+          "netByCurrency",
+          "balanceCacheMismatches",
+          "trialBalance",
+          "healthy"
+        ]
+      },
+      "CreateWalletDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          }
+        },
+        "required": [
+          "currency"
+        ]
+      },
+      "WalletStatus": {
+        "type": "string",
+        "enum": [
+          "ACTIVE",
+          "FROZEN",
+          "CLOSED"
+        ]
+      },
+      "WalletDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WalletStatus"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "status",
+          "id",
+          "balance",
+          "createdAt"
+        ]
+      },
+      "WalletHistoryItemDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntryType"
+              }
+            ]
+          },
+          "direction": {
+            "enum": [
+              "IN",
+              "OUT"
+            ],
+            "type": "string"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "postingId": {
+            "type": "string"
+          },
+          "transactionId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "string"
+          },
+          "balanceAfter": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "direction",
+          "currency",
+          "metadata",
+          "postingId",
+          "transactionId",
+          "description",
+          "amount",
+          "amountMinor",
+          "balanceAfter",
+          "createdAt"
+        ]
+      },
+      "WalletHistoryPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WalletHistoryItemDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "DepositDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "TransactionLegDto": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "enum": [
+              "IN",
+              "OUT"
+            ],
+            "type": "string"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "walletId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "string"
+          },
+          "balanceAfter": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction",
+          "currency",
+          "walletId",
+          "amount",
+          "amountMinor",
+          "balanceAfter"
+        ]
+      },
+      "TransactionDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntryType"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "COMPLETED"
+            ]
+          },
+          "reversalOfId": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionLegDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "status",
+          "reversalOfId",
+          "metadata",
+          "legs",
+          "id",
+          "description",
+          "createdAt"
+        ]
+      },
+      "WithdrawDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount",
+          "pin"
+        ]
+      },
+      "FxPairDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "to": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "midRate": {
+            "type": "string"
+          },
+          "customerRate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "midRate",
+          "customerRate"
+        ]
+      },
+      "FxRatesTableDto": {
+        "type": "object",
+        "properties": {
+          "pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxPairDto"
+            }
+          },
+          "spreadBps": {
+            "type": "number"
+          },
+          "feeBps": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "pairs",
+          "spreadBps",
+          "feeBps"
+        ]
+      },
+      "CreateQuoteDto": {
+        "type": "object",
+        "properties": {
+          "fromCurrency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "toCurrency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "sellAmount": {
+            "type": "string",
+            "description": "Amount of `fromCurrency` to convert (fee is charged on top)."
+          }
+        },
+        "required": [
+          "fromCurrency",
+          "toCurrency",
+          "sellAmount"
+        ]
+      },
+      "FxQuoteStatus": {
+        "type": "string",
+        "enum": [
+          "OPEN",
+          "EXECUTED",
+          "EXPIRED"
+        ]
+      },
+      "FxQuoteDto": {
+        "type": "object",
+        "properties": {
+          "fromCurrency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "toCurrency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxQuoteStatus"
+              }
+            ]
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "sell": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "fee": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "totalDebit": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "buy": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "midRate": {
+            "type": "string"
+          },
+          "customerRate": {
+            "type": "string"
+          },
+          "spreadBps": {
+            "type": "number"
+          },
+          "feeBps": {
+            "type": "number"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromCurrency",
+          "toCurrency",
+          "status",
+          "journalEntryId",
+          "id",
+          "sell",
+          "fee",
+          "totalDebit",
+          "buy",
+          "midRate",
+          "customerRate",
+          "spreadBps",
+          "feeBps",
+          "expiresAt"
+        ]
+      },
+      "ExecuteConversionDto": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "quoteId",
+          "pin"
+        ]
+      },
+      "ConversionResultDto": {
+        "type": "object",
+        "properties": {
+          "quote": {
+            "$ref": "#/components/schemas/FxQuoteDto"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/TransactionDto"
+          }
+        },
+        "required": [
+          "quote",
+          "transaction"
+        ]
+      },
+      "AdminWalletDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WalletStatus"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "ledgerAccountId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "status",
+          "id",
+          "balance",
+          "createdAt",
+          "userId",
+          "ledgerAccountId"
+        ]
+      },
+      "SetWalletStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "FROZEN",
+              "CLOSED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
+      "FeeRuleDto": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "string",
+            "enum": [
+              "P2P",
+              "P2P_FX",
+              "REQUEST",
+              "QR_P2P",
+              "QR_MERCHANT",
+              "TOPUP_BANK_TRANSFER",
+              "TOPUP_CARD",
+              "WITHDRAWAL"
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "max": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "bps": {
+            "type": "number",
+            "description": "Percentage part in basis points (1 bp = 0.01%)"
+          },
+          "fixed": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "min": {
+            "$ref": "#/components/schemas/MoneyDto"
+          }
+        },
+        "required": [
+          "product",
+          "currency",
+          "max",
+          "bps",
+          "fixed",
+          "min"
+        ]
+      },
+      "PaymentType": {
+        "type": "string",
+        "enum": [
+          "P2P",
+          "P2P_FX",
+          "REQUEST",
+          "QR_MERCHANT",
+          "QR_P2P",
+          "REFUND"
+        ]
+      },
+      "PaymentStatus": {
+        "type": "string",
+        "enum": [
+          "CREATED",
+          "PROCESSING",
+          "COMPLETED",
+          "FAILED",
+          "REVERSED",
+          "PARTIALLY_REFUNDED",
+          "REFUNDED"
+        ]
+      },
+      "TimelineEntryDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string",
+            "description": "ISO-8601 UTC"
+          }
+        },
+        "required": [
+          "status",
+          "at"
+        ]
+      },
+      "PartyDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "USER",
+              "MERCHANT"
+            ],
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "merchantId": {
+            "type": "string"
+          },
+          "outletName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Privacy-preserving name, e.g. \"Ali K.\" for users or the business name for merchants"
+          }
+        },
+        "required": [
+          "type",
+          "displayName"
+        ]
+      },
+      "PaymentDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentStatus"
+              }
+            ]
+          },
+          "received": {
+            "description": "Cross-currency payments: what the payee received",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true
+          },
+          "completedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEntryDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "amount": {
+            "description": "Amount sent, in the payer's currency",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "fee": {
+            "description": "Fee charged to the payer (payer's currency)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "totalDebit": {
+            "description": "amount + fee",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "payer": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "payee": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "status",
+          "reference",
+          "failureReason",
+          "journalEntryId",
+          "completedAt",
+          "timeline",
+          "id",
+          "amount",
+          "fee",
+          "totalDebit",
+          "payer",
+          "payee",
+          "createdAt"
+        ]
+      },
+      "RecipientDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string",
+            "description": "With or without a leading @"
+          }
+        }
+      },
+      "CreateTransferQuoteDto": {
+        "type": "object",
+        "properties": {
+          "fromWalletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "to": {
+            "$ref": "#/components/schemas/RecipientDto"
+          },
+          "toCurrency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "description": "Decimal string; its currency is the source wallet's (SEND) or `toCurrency` (RECEIVE)."
+          },
+          "amountSide": {
+            "type": "string",
+            "enum": [
+              "SEND",
+              "RECEIVE"
+            ]
+          }
+        },
+        "required": [
+          "fromWalletId",
+          "to",
+          "toCurrency",
+          "amount",
+          "amountSide"
+        ]
+      },
+      "FxRatesDto": {
+        "type": "object",
+        "properties": {
+          "midRate": {
+            "type": "string",
+            "description": "Mid-market rate, 8 decimal places"
+          },
+          "customerRate": {
+            "type": "string",
+            "description": "Rate applied to the customer (mid less spread), 8 decimal places"
+          }
+        },
+        "required": [
+          "midRate",
+          "customerRate"
+        ]
+      },
+      "RecipientSummaryDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "displayName"
+        ]
+      },
+      "TransferQuoteDto": {
+        "type": "object",
+        "properties": {
+          "fx": {
+            "nullable": true,
+            "description": "null for same-currency quotes",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxRatesDto"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "send": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "receive": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "fee": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "totalDebit": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/RecipientSummaryDto"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fx",
+          "id",
+          "send",
+          "receive",
+          "fee",
+          "totalDebit",
+          "recipient",
+          "expiresAt"
+        ]
+      },
+      "CreateTransferDto": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromWalletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toPhone": {
+            "type": "string"
+          },
+          "toUsername": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 140
+          }
+        },
+        "required": [
+          "pin"
+        ]
+      },
+      "CreatePaymentRequestDto": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "$ref": "#/components/schemas/RecipientDto"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 140
+          },
+          "expiresInHours": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 168
+          }
+        },
+        "required": [
+          "to",
+          "amount",
+          "currency"
+        ]
+      },
+      "PaymentRequestStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "ACCEPTED",
+          "DECLINED",
+          "CANCELLED",
+          "EXPIRED"
+        ]
+      },
+      "PaymentRequestDto": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentRequestStatus"
+              }
+            ]
+          },
+          "paymentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "requester": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "payer": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "note",
+          "status",
+          "paymentId",
+          "id",
+          "requester",
+          "payer",
+          "amount",
+          "expiresAt",
+          "createdAt"
+        ]
+      },
+      "PaymentRequestPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentRequestDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "AcceptPaymentRequestDto": {
+        "type": "object",
+        "properties": {
+          "fromWalletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromWalletId",
+          "pin"
+        ]
+      },
+      "CreateReceiveQrDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "description": "Fixed amount (single-use, expires). Omit for a reusable \"pay me any amount\" code."
+          }
+        },
+        "required": [
+          "currency"
+        ]
+      },
+      "ReceiveQrDto": {
+        "type": "object",
+        "properties": {
+          "expiresAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "qrId": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expiresAt",
+          "qrId",
+          "payload"
+        ]
+      },
+      "ResolveQrDto": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "The opaque payload exactly as scanned (PC1.<claims>.<signature>)",
+            "minLength": 10,
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      },
+      "QrKind": {
+        "type": "string",
+        "enum": [
+          "STATIC_MERCHANT",
+          "DYNAMIC_MERCHANT",
+          "P2P_RECEIVE"
+        ]
+      },
+      "QrPreviewDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QrKind"
+              }
+            ]
+          },
+          "amount": {
+            "nullable": true,
+            "description": "null: the payer enters the amount",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "fee": {
+            "nullable": true,
+            "description": "Fee charged to the payer (null when the amount is payer-entered; see GET /fees)",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "When the QR itself expires (null = reusable static code)"
+          },
+          "previewToken": {
+            "type": "string"
+          },
+          "payee": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "previewExpiresAt": {
+            "type": "string",
+            "description": "When this preview token expires"
+          }
+        },
+        "required": [
+          "kind",
+          "amount",
+          "currency",
+          "fee",
+          "expiresAt",
+          "previewToken",
+          "payee",
+          "previewExpiresAt"
+        ]
+      },
+      "PayQrDto": {
+        "type": "object",
+        "properties": {
+          "previewToken": {
+            "type": "string",
+            "description": "From POST /qr/resolve (short-lived, single use, bound to you, the payee, the amount and the fee)",
+            "minLength": 10,
+            "maxLength": 4096
+          },
+          "fromWalletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Required when the preview amount is null (payer-entered amount); must match otherwise."
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "previewToken",
+          "fromWalletId",
+          "pin"
+        ]
+      },
+      "BankAccountDto": {
+        "type": "object",
+        "properties": {
+          "iban": {
+            "type": "string",
+            "description": "IBAN, e.g. PK36SCBL0000001123456702",
+            "pattern": "^[A-Z]{2}\\d{2}[A-Z0-9]{10,30}$"
+          },
+          "accountTitle": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "bankName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "iban",
+          "accountTitle",
+          "bankName"
+        ]
+      },
+      "CreateMerchantDto": {
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "category": {
+            "type": "string",
+            "description": "ISO 18245 merchant category code, 4 digits (e.g. 5812 restaurants)",
+            "pattern": "^\\d{4}$"
+          },
+          "registrationNumber": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 64
+          },
+          "settlementCurrency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "settlementBank": {
+            "$ref": "#/components/schemas/BankAccountDto"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "businessName",
+          "category",
+          "registrationNumber",
+          "settlementCurrency",
+          "settlementBank"
+        ]
+      },
+      "MerchantStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING_REVIEW",
+          "ACTIVE",
+          "SUSPENDED"
+        ]
+      },
+      "KybTier": {
+        "type": "string",
+        "enum": [
+          "KYB_0",
+          "KYB_1",
+          "KYB_2"
+        ]
+      },
+      "MerchantDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MerchantStatus"
+              }
+            ]
+          },
+          "kybTier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KybTier"
+              }
+            ]
+          },
+          "settlementCurrency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "settlementDelayDays": {
+            "type": "number"
+          },
+          "mdrBps": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "kybTier",
+          "settlementCurrency",
+          "id",
+          "businessName",
+          "category",
+          "settlementDelayDays",
+          "mdrBps",
+          "createdAt"
+        ]
+      },
+      "SettlementStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "PAID",
+          "FAILED"
+        ]
+      },
+      "SettlementLineDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "PAYMENT",
+              "REFUND"
+            ]
+          },
+          "paymentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "refundId": {
+            "type": "string",
+            "nullable": true
+          },
+          "gross": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "mdr": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "net": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "occurredAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "paymentId",
+          "refundId",
+          "gross",
+          "mdr",
+          "net",
+          "occurredAt"
+        ]
+      },
+      "SettlementDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SettlementStatus"
+              }
+            ]
+          },
+          "paidAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettlementLineDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string"
+          },
+          "periodEnd": {
+            "type": "string"
+          },
+          "gross": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "mdr": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "refunds": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "net": {
+            "$ref": "#/components/schemas/MoneyDto"
+          }
+        },
+        "required": [
+          "currency",
+          "status",
+          "paidAt",
+          "bankReference",
+          "id",
+          "periodStart",
+          "periodEnd",
+          "gross",
+          "mdr",
+          "refunds",
+          "net"
+        ]
+      },
+      "DashboardPointDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD (UTC)"
+          },
+          "volume": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "volume",
+          "count"
+        ]
+      },
+      "DashboardTodayDto": {
+        "type": "object",
+        "properties": {
+          "volume": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "count": {
+            "type": "number"
+          },
+          "refunds": {
+            "$ref": "#/components/schemas/MoneyDto"
+          }
+        },
+        "required": [
+          "volume",
+          "count",
+          "refunds"
+        ]
+      },
+      "MerchantDashboardDto": {
+        "type": "object",
+        "properties": {
+          "lastSettlement": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SettlementDto"
+              }
+            ]
+          },
+          "series": {
+            "description": "Last 14 days, oldest first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardPointDto"
+            }
+          },
+          "today": {
+            "$ref": "#/components/schemas/DashboardTodayDto"
+          },
+          "pendingSettlement": {
+            "description": "Unsettled net balance owed to the merchant",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "lastSettlement",
+          "series",
+          "today",
+          "pendingSettlement"
+        ]
+      },
+      "ResourceStatus": {
+        "type": "string",
+        "enum": [
+          "ACTIVE",
+          "DISABLED"
+        ]
+      },
+      "StaticQrDto": {
+        "type": "object",
+        "properties": {
+          "qrId": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "qrId",
+          "payload"
+        ]
+      },
+      "OutletDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceStatus"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "staticQr": {
+            "$ref": "#/components/schemas/StaticQrDto"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "status",
+          "id",
+          "name",
+          "staticQr",
+          "createdAt"
+        ]
+      },
+      "CreateOutletDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "address": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "TerminalDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceStatus"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "id",
+          "label",
+          "createdAt"
+        ]
+      },
+      "CreateTerminalDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "CreateDynamicQrDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "PKR",
+              "AED",
+              "USD"
+            ]
+          },
+          "outletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "terminalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Your order/invoice reference, shown to the payer and in reports",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "expiresInSeconds": {
+            "type": "number",
+            "minimum": 30,
+            "maximum": 3600
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "expiresInSeconds"
+        ]
+      },
+      "DynamicQrDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "PAID",
+              "EXPIRED"
+            ],
+            "type": "string"
+          },
+          "paymentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "qrId": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "qrId",
+          "payload",
+          "amount",
+          "expiresAt"
+        ]
+      },
+      "MerchantPaymentDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentStatus"
+              }
+            ]
+          },
+          "received": {
+            "description": "Cross-currency payments: what the payee received",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true
+          },
+          "completedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEntryDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "amount": {
+            "description": "Amount sent, in the payer's currency",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "fee": {
+            "description": "Fee charged to the payer (payer's currency)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "totalDebit": {
+            "description": "amount + fee",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "payer": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "payee": {
+            "$ref": "#/components/schemas/PartyDto"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "mdrFee": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "net": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "refundedAmount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          }
+        },
+        "required": [
+          "type",
+          "status",
+          "reference",
+          "failureReason",
+          "journalEntryId",
+          "completedAt",
+          "timeline",
+          "id",
+          "amount",
+          "fee",
+          "totalDebit",
+          "payer",
+          "payee",
+          "createdAt",
+          "mdrFee",
+          "net",
+          "refundedAmount"
+        ]
+      },
+      "MerchantPaymentPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantPaymentDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "CreateRefundDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Defaults to the full remaining refundable amount"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "RefundStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "COMPLETED",
+          "FAILED"
+        ]
+      },
+      "RefundDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RefundStatus"
+              }
+            ]
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "amount",
+          "reason",
+          "createdAt"
+        ]
+      },
+      "MerchantPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "SetPricingDto": {
+        "type": "object",
+        "properties": {
+          "mdrBps": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "settlementDelayDays": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30
+          }
+        },
+        "required": [
+          "mdrBps",
+          "settlementDelayDays"
+        ]
+      },
+      "CreateTopupDto": {
+        "type": "object",
+        "properties": {
+          "walletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "BANK_TRANSFER",
+              "CARD"
+            ]
+          }
+        },
+        "required": [
+          "walletId",
+          "amount",
+          "method"
+        ]
+      },
+      "FundingDirection": {
+        "type": "string",
+        "enum": [
+          "TOPUP",
+          "WITHDRAWAL"
+        ]
+      },
+      "FundingMethod": {
+        "type": "string",
+        "enum": [
+          "BANK_TRANSFER",
+          "CARD"
+        ]
+      },
+      "FundingStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "SUCCEEDED",
+          "FAILED",
+          "REVERSED"
+        ]
+      },
+      "FundingInstructionsDto": {
+        "type": "object",
+        "properties": {
+          "bankName": {
+            "type": "string"
+          },
+          "iban": {
+            "type": "string"
+          },
+          "accountTitle": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Quote this reference in the transfer so the bank can match it"
+          }
+        },
+        "required": [
+          "bankName",
+          "iban",
+          "accountTitle",
+          "reference"
+        ]
+      },
+      "FundingTransactionDto": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FundingDirection"
+              }
+            ]
+          },
+          "method": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FundingMethod"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FundingStatus"
+              }
+            ]
+          },
+          "bankReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "instructions": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FundingInstructionsDto"
+              }
+            ]
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEntryDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "walletId": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "fee": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction",
+          "method",
+          "status",
+          "bankReference",
+          "instructions",
+          "failureReason",
+          "timeline",
+          "id",
+          "walletId",
+          "amount",
+          "fee",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateWithdrawalDto": {
+        "type": "object",
+        "properties": {
+          "walletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "bankAccount": {
+            "$ref": "#/components/schemas/BankAccountDto"
+          },
+          "pin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "walletId",
+          "amount",
+          "bankAccount",
+          "pin"
+        ]
+      },
+      "FundingPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FundingTransactionDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "WebhookReceiptDto": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "APPLIED",
+              "DEFERRED",
+              "FLAGGED",
+              "IGNORED",
+              "UNMATCHED",
+              "DUPLICATE"
+            ]
+          },
+          "received": {
+            "type": "boolean"
+          },
+          "duplicate": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "outcome",
+          "received",
+          "duplicate"
+        ]
+      },
+      "ReconciliationStatus": {
+        "type": "string",
+        "enum": [
+          "RUNNING",
+          "COMPLETED",
+          "FAILED"
+        ]
+      },
+      "ReconciliationItemType": {
+        "type": "string",
+        "enum": [
+          "MISSING_IN_LEDGER",
+          "MISSING_IN_BANK",
+          "AMOUNT_MISMATCH"
+        ]
+      },
+      "ReconciliationItemDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReconciliationItemType"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "bankAmount": {
+            "nullable": true,
+            "description": "Net movement per the bank statement (+ in / - out)",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "ledgerAmount": {
+            "nullable": true,
+            "description": "Net movement on BANK_CLEARING per the ledger",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "fundingId": {
+            "type": "string",
+            "nullable": true
+          },
+          "settlementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankReference": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "currency",
+          "bankAmount",
+          "ledgerAmount",
+          "fundingId",
+          "settlementId",
+          "bankReference"
+        ]
+      },
+      "ReconciliationRunDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReconciliationStatus"
+              }
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationItemDto"
+            }
+          },
+          "completedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "matched": {
+            "type": "number"
+          },
+          "missingInLedger": {
+            "type": "number"
+          },
+          "missingInBank": {
+            "type": "number"
+          },
+          "amountMismatches": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "items",
+          "completedAt",
+          "id",
+          "date",
+          "matched",
+          "missingInLedger",
+          "missingInBank",
+          "amountMismatches",
+          "createdAt"
+        ]
+      },
+      "ReconciliationRunPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationRunDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "RunReconciliationDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "UTC business date, YYYY-MM-DD (default: yesterday)",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        }
+      },
+      "SimulateBankDto": {
+        "type": "object",
+        "properties": {
+          "fundingId": {
+            "type": "string",
+            "description": "The funding transaction to resolve",
+            "format": "uuid"
+          },
+          "settlementId": {
+            "type": "string",
+            "description": "Extension: resolve a merchant settlement payout instead (SUCCEEDED -> PAID)",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "SUCCEEDED",
+              "FAILED",
+              "REVERSED"
+            ]
+          },
+          "delayMs": {
+            "type": "number",
+            "description": "Deliver the webhook later (processed by the outbox relay / worker)",
+            "minimum": 0,
+            "maximum": 86400000
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "SimulationResultDto": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "SUCCEEDED",
+              "FAILED",
+              "REVERSED"
+            ]
+          },
+          "scheduledFor": {
+            "type": "string",
+            "nullable": true
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/WebhookReceiptDto"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "delivered": {
+            "type": "boolean",
+            "description": "false when delayMs > 0: the webhook is sent later by the worker"
+          }
+        },
+        "required": [
+          "outcome",
+          "scheduledFor",
+          "reference",
+          "eventId",
+          "delivered"
+        ]
+      },
+      "SettlementPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettlementDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "RunSettlementDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SettlementRunDto": {
+        "type": "object",
+        "properties": {
+          "settlements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettlementDto"
+            }
+          },
+          "asOf": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "settlements",
+          "asOf"
+        ]
+      },
+      "ActivityItemDto": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "P2P",
+              "P2P_FX",
+              "REQUEST",
+              "QR_MERCHANT",
+              "QR_P2P",
+              "REFUND",
+              "TOPUP",
+              "WITHDRAWAL",
+              "DEPOSIT",
+              "TRANSFER",
+              "FX_CONVERSION",
+              "REVERSAL",
+              "ADJUSTMENT"
+            ]
+          },
+          "counterparty": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PartyDto"
+              }
+            ]
+          },
+          "direction": {
+            "enum": [
+              "IN",
+              "OUT"
+            ],
+            "type": "string"
+          },
+          "fee": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDto"
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "Posting id (unique per wallet movement)"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Journal entry id"
+          },
+          "title": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "balanceAfter": {
+            "$ref": "#/components/schemas/MoneyDto"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment / funding status, or COMPLETED for plain ledger entries"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "paymentId",
+          "type",
+          "counterparty",
+          "direction",
+          "fee",
+          "id",
+          "transactionId",
+          "title",
+          "amount",
+          "balanceAfter",
+          "status",
+          "createdAt"
+        ]
+      },
+      "ActivityPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityItemDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      }
+    }
+  }
+}

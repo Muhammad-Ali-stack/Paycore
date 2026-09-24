@@ -1,0 +1,14 @@
+.next
+node_modules
+out
+build
+coverage
+storybook-static
+playwright-report
+test-results
+src/lib/api/schema.d.ts
+package-lock.json
+public/icons
+*.png
+AGENTS.md
+CLAUDE.md

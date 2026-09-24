@@ -1,0 +1,146 @@
+/*
+ * PayCore design tokens.
+ *
+ * This is the ONLY file allowed to contain raw colour values. Components use the
+ * Tailwind utilities generated from these variables (see globals.css @theme), or
+ * var(--pc-*) directly (charts, SVG). Derived from the logo: near-black base,
+ * slate structure (the cube outlines) and a single tan/gold accent (the bars).
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --pc-bg: #0b0c0f;
+  --pc-surface: #13151a;
+  --pc-raised: #1b1e25;
+  --pc-overlay: rgb(5 6 8 / 0.72);
+  --pc-border: #262a33;
+  --pc-border-strong: #353a46;
+
+  /* Text */
+  --pc-fg: #e8eaf0;
+  --pc-fg-muted: #8b93a7;
+  --pc-fg-subtle: #5d6579; /* decorative / large text only (3.3:1 on bg) */
+
+  /* Accent (tan / gold) */
+  --pc-accent: #c8a26b;
+  --pc-accent-hover: #d8b47e;
+  --pc-accent-fg: #0b0c0f; /* text on an accent fill */
+  --pc-accent-text: #c8a26b; /* accent used as text on bg/surface */
+  --pc-accent-tint: rgb(200 162 107 / 0.12);
+  --pc-accent-glow: rgb(200 162 107 / 0.28);
+
+  /* Semantic (muted) */
+  --pc-success: #5fb08a;
+  --pc-success-tint: rgb(95 176 138 / 0.12);
+  --pc-danger: #d9605a;
+  /* Danger as TEXT on its own tint needs a touch more light to keep WCAG AA (4.5:1). */
+  --pc-danger-text: #e36e68;
+  --pc-danger-tint: rgb(217 96 90 / 0.12);
+  --pc-warning: #d6a24a;
+  --pc-warning-tint: rgb(214 162 74 / 0.12);
+  --pc-info: #8b93a7;
+  --pc-info-tint: rgb(139 147 167 / 0.12);
+
+  /* Charts: accent first, then slate and muted companions */
+  --pc-chart-1: #c8a26b;
+  --pc-chart-2: #8b93a7;
+  --pc-chart-3: #5fb08a;
+  --pc-chart-4: #7b8fbd;
+  --pc-chart-5: #b58497;
+  --pc-chart-6: #5d6579;
+  --pc-chart-grid: #262a33;
+
+  /* Balance card gradient (the only gradient in the product) */
+  --pc-balance-from: #1f1c17;
+  --pc-balance-via: #16171b;
+  --pc-balance-to: #111216;
+
+  /* Virtual card visual */
+  --pc-card-from: #2a2e38;
+  --pc-card-to: #15171c;
+  --pc-card-line: rgb(200 162 107 / 0.35);
+  --pc-card-fg: #e8eaf0;
+
+  /* Logo */
+  --pc-logo-outline: #8b93a7;
+  --pc-logo-fill: #1b1e25;
+  --pc-logo-accent: #c8a26b;
+
+  --pc-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -12px rgb(0 0 0 / 0.6);
+
+  /* QR codes always render dark-on-light for reliable scanning (both themes). */
+  --pc-qr-bg: #ffffff;
+  --pc-qr-fg: #0b0c0f;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --pc-bg: #f7f4ee;
+  --pc-surface: #fffdf9;
+  --pc-raised: #f0ebe2;
+  --pc-overlay: rgb(30 26 20 / 0.45);
+  --pc-border: #e2dbcd;
+  --pc-border-strong: #cfc6b5;
+
+  --pc-fg: #16181d;
+  --pc-fg-muted: #4f5769;
+  --pc-fg-subtle: #6b7385;
+
+  --pc-accent: #c8a26b;
+  --pc-accent-hover: #b88f55;
+  --pc-accent-fg: #16181d;
+  --pc-accent-text: #87652f;
+  --pc-accent-tint: rgb(200 162 107 / 0.16);
+  --pc-accent-glow: rgb(200 162 107 / 0.3);
+
+  --pc-success: #2f7a56;
+  --pc-success-tint: rgb(47 122 86 / 0.1);
+  --pc-danger: #b0423c;
+  --pc-danger-text: #a33a34;
+  --pc-danger-tint: rgb(176 66 60 / 0.1);
+  --pc-warning: #8f6414;
+  --pc-warning-tint: rgb(143 100 20 / 0.1);
+  --pc-info: #4f5769;
+  --pc-info-tint: rgb(79 87 105 / 0.1);
+
+  --pc-chart-1: #b88f55;
+  --pc-chart-2: #6b7385;
+  --pc-chart-3: #3f8f69;
+  --pc-chart-4: #5a6f9e;
+  --pc-chart-5: #9a6479;
+  --pc-chart-6: #a9afbd;
+  --pc-chart-grid: #e2dbcd;
+
+  --pc-balance-from: #efe4d1;
+  --pc-balance-via: #f7f1e7;
+  --pc-balance-to: #fffdf9;
+
+  --pc-card-from: #2a2e38;
+  --pc-card-to: #15171c;
+  --pc-card-line: rgb(200 162 107 / 0.45);
+  --pc-card-fg: #e8eaf0; /* the card visual stays dark in the light theme */
+
+  --pc-logo-outline: #4f5769;
+  --pc-logo-fill: #f0ebe2;
+  --pc-logo-accent: #b88f55;
+
+  --pc-shadow: 0 1px 2px rgb(40 32 20 / 0.06), 0 12px 32px -16px rgb(40 32 20 / 0.18);
+}
+
+:root {
+  --pc-font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pc-font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --pc-font-urdu: 'Noto Naskh Arabic Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --pc-radius-sm: 8px;
+  --pc-radius-md: 12px;
+  --pc-radius-lg: 16px;
+  --pc-radius-xl: 20px;
+
+  --pc-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pc-duration: 180ms;
+}

@@ -1,0 +1,938 @@
+// PayCore data model.
+// Money is ALWAYS stored as BigInt minor units (paisa / fils / cents). No floats anywhere.
+// Ledger tables (journal_entries, postings) are append-only; this is enforced by DB triggers
+// in the migrations, not just by application code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// DATABASE_URL: Supabase transaction pooler (port 6543, ?pgbouncer=true) used by the running app.
+// DIRECT_URL:   direct / session connection (port 5432) used by `prisma migrate`.
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────── Enums ───────────────────────────────
+
+enum Currency {
+  PKR
+  AED
+  USD
+}
+
+enum Role {
+  CONSUMER
+  MERCHANT
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+}
+
+enum KycTier {
+  TIER_0
+  TIER_1
+  TIER_2
+  TIER_3
+}
+
+enum OtpPurpose {
+  REGISTRATION
+  PASSWORD_RESET
+}
+
+enum KycSubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum KycDocumentType {
+  CNIC
+  PASSPORT
+  EMIRATES_ID
+  DRIVING_LICENSE
+  BUSINESS_REGISTRATION
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+}
+
+enum AccountOwnerType {
+  SYSTEM
+  WALLET
+  MERCHANT
+}
+
+enum EntryType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+  FX_CONVERSION
+  REVERSAL
+  ADJUSTMENT
+  PAYMENT
+  REFUND
+  TOPUP
+  WITHDRAWAL_HOLD
+  WITHDRAWAL_PAYOUT
+  SETTLEMENT
+  SETTLEMENT_PAYOUT
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum FxQuoteStatus {
+  OPEN
+  EXECUTED
+  EXPIRED
+}
+
+enum IdempotencyStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ─────────────────────────────── Users & Auth ───────────────────────────────
+
+model User {
+  id                  String     @id @default(uuid()) @db.Uuid
+  phone               String     @unique
+  /// Lower-case handle (^[a-z0-9_]{3,20}$), unique. null until the user picks one.
+  username            String?    @unique
+  fullName            String     @map("full_name")
+  passwordHash        String     @map("password_hash")
+  role                Role       @default(CONSUMER)
+  status              UserStatus @default(PENDING_VERIFICATION)
+  kycTier             KycTier    @default(TIER_0) @map("kyc_tier")
+  phoneVerifiedAt     DateTime?  @map("phone_verified_at")
+  failedLoginAttempts Int        @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime?  @map("locked_until")
+  pinHash             String?    @map("pin_hash")
+  pinFailedAttempts   Int        @default(0) @map("pin_failed_attempts")
+  pinLockedUntil      DateTime?  @map("pin_locked_until")
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @updatedAt @map("updated_at")
+
+  sessions       Session[]
+  wallets        Wallet[]
+  kycSubmissions KycSubmission[] @relation("KycSubmitter")
+
+  @@map("users")
+}
+
+model OtpChallenge {
+  id         String     @id @default(uuid()) @db.Uuid
+  phone      String
+  purpose    OtpPurpose
+  codeHash   String     @map("code_hash")
+  attempts   Int        @default(0)
+  expiresAt  DateTime   @map("expires_at")
+  consumedAt DateTime?  @map("consumed_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  @@index([phone, purpose, createdAt])
+  @@map("otp_challenges")
+}
+
+/// A device session. Each login creates one; refresh tokens rotate within it.
+model Session {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  deviceId   String    @map("device_id")
+  deviceName String?   @map("device_name")
+  userAgent  String?   @map("user_agent")
+  ipAddress  String?   @map("ip_address")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  lastUsedAt DateTime  @default(now()) @map("last_used_at")
+  expiresAt  DateTime  @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  revokeReason String? @map("revoke_reason")
+
+  user          User           @relation(fields: [userId], references: [id])
+  refreshTokens RefreshToken[]
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+/// Rotating refresh tokens. Only a SHA-256 hash is stored. Presenting a token that has
+/// already been rotated (usedAt != null) is treated as theft and revokes the whole session.
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  sessionId String    @map("session_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
+  @@map("refresh_tokens")
+}
+
+// ─────────────────────────────── KYC ───────────────────────────────
+
+/// Per tier, per currency limits in minor units. A limit of 0 means "currency not permitted".
+model TierLimit {
+  tier          KycTier
+  currency      Currency
+  perTxnMax     BigInt   @map("per_txn_max")
+  dailyMax      BigInt   @map("daily_max")
+  monthlyMax    BigInt   @map("monthly_max")
+  maxBalance    BigInt   @map("max_balance")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@id([tier, currency])
+  @@map("tier_limits")
+}
+
+model KycSubmission {
+  id                 String              @id @default(uuid()) @db.Uuid
+  userId             String              @map("user_id") @db.Uuid
+  targetTier         KycTier             @map("target_tier")
+  status             KycSubmissionStatus @default(PENDING)
+  documentType       KycDocumentType     @map("document_type")
+  /// SHA-256 of the normalised document number; the raw number is never stored.
+  documentNumberHash String              @map("document_number_hash")
+  documentLast4      String              @map("document_last4")
+  documentRef        String?             @map("document_ref")
+  dateOfBirth        String?             @map("date_of_birth")
+  address            String?
+  businessName       String?             @map("business_name")
+  verificationResult Json?               @map("verification_result")
+  reviewedById       String?             @map("reviewed_by_id") @db.Uuid
+  reviewedAt         DateTime?           @map("reviewed_at")
+  rejectionReason    String?             @map("rejection_reason")
+  createdAt          DateTime            @default(now()) @map("created_at")
+
+  user User @relation("KycSubmitter", fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@map("kyc_submissions")
+}
+
+/// Append-only audit trail for KYC decisions and tier changes.
+model KycAuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  submissionId String?  @map("submission_id") @db.Uuid
+  /// null actor = SYSTEM (automated decision)
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String
+  fromTier     KycTier? @map("from_tier")
+  toTier       KycTier? @map("to_tier")
+  details      Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@map("kyc_audit_logs")
+}
+
+// ─────────────────────────────── Ledger ───────────────────────────────
+
+/// A ledger account. `balance` is a cache of SUM(postings) expressed on the account's
+/// normal side, updated in the same DB transaction as the postings, guarded by `version`.
+model LedgerAccount {
+  id            String           @id @default(uuid()) @db.Uuid
+  /// Unique code for system accounts, e.g. "FEE_REVENUE.PKR". null for wallet accounts.
+  code          String?          @unique
+  name          String
+  type          AccountType
+  normalBalance NormalBalance    @map("normal_balance")
+  ownerType     AccountOwnerType @map("owner_type")
+  currency      Currency
+  allowNegative Boolean          @default(false) @map("allow_negative")
+  balance       BigInt           @default(0)
+  version       Int              @default(0)
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  postings Posting[]
+  wallet   Wallet?
+
+  @@map("ledger_accounts")
+}
+
+model JournalEntry {
+  id           String    @id @default(uuid()) @db.Uuid
+  type         EntryType
+  description  String
+  /// Business-level dedupe key (e.g. "idem:<userId>:<Idempotency-Key>"). Guarantees
+  /// at-most-once posting even if the idempotency record is lost.
+  externalRef  String?   @unique @map("external_ref")
+  /// Set when this entry reverses another. Unique => an entry can be reversed at most once.
+  reversalOfId String?   @unique @map("reversal_of_id") @db.Uuid
+  initiatedBy  String?   @map("initiated_by") @db.Uuid
+  metadata     Json?
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  postings   Posting[]
+  reversalOf JournalEntry? @relation("Reversal", fields: [reversalOfId], references: [id])
+  reversedBy JournalEntry? @relation("Reversal")
+
+  @@index([createdAt])
+  @@map("journal_entries")
+}
+
+/// A single leg of a journal entry. amount > 0 = DEBIT, amount < 0 = CREDIT.
+/// For every (entry, currency): SUM(amount) = 0 (enforced by a deferred constraint trigger).
+model Posting {
+  id           String   @id @default(uuid()) @db.Uuid
+  entryId      String   @map("entry_id") @db.Uuid
+  accountId    String   @map("account_id") @db.Uuid
+  currency     Currency
+  amount       BigInt
+  /// Account balance (normal side) immediately after this posting.
+  balanceAfter BigInt   @map("balance_after")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  entry   JournalEntry  @relation(fields: [entryId], references: [id])
+  account LedgerAccount @relation(fields: [accountId], references: [id])
+
+  @@index([entryId])
+  @@index([accountId, createdAt])
+  @@map("postings")
+}
+
+// ─────────────────────────────── Wallets & FX ───────────────────────────────
+
+model Wallet {
+  id              String       @id @default(uuid()) @db.Uuid
+  userId          String       @map("user_id") @db.Uuid
+  currency        Currency
+  status          WalletStatus @default(ACTIVE)
+  ledgerAccountId String       @unique @map("ledger_account_id") @db.Uuid
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  user          User          @relation(fields: [userId], references: [id])
+  ledgerAccount LedgerAccount @relation(fields: [ledgerAccountId], references: [id])
+
+  @@unique([userId, currency])
+  @@map("wallets")
+}
+
+model FxQuote {
+  id             String        @id @default(uuid()) @db.Uuid
+  userId         String        @map("user_id") @db.Uuid
+  fromCurrency   Currency      @map("from_currency")
+  toCurrency     Currency      @map("to_currency")
+  /// Amount debited from the source wallet for conversion (excl. fee), minor units.
+  sellAmount     BigInt        @map("sell_amount")
+  /// Amount credited to the destination wallet, minor units.
+  buyAmount      BigInt        @map("buy_amount")
+  /// Fee in source currency minor units.
+  feeAmount      BigInt        @map("fee_amount")
+  /// Rates are fixed-point integers scaled by 10^8 (no floats).
+  midRate        BigInt        @map("mid_rate")
+  customerRate   BigInt        @map("customer_rate")
+  spreadBps      Int           @map("spread_bps")
+  feeBps         Int           @map("fee_bps")
+  status         FxQuoteStatus @default(OPEN)
+  expiresAt      DateTime      @map("expires_at")
+  executedAt     DateTime?     @map("executed_at")
+  journalEntryId String?       @unique @map("journal_entry_id") @db.Uuid
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@map("fx_quotes")
+}
+
+// ─────────────────────────────── Idempotency ───────────────────────────────
+
+model IdempotencyRecord {
+  id             String            @id @default(uuid()) @db.Uuid
+  /// Scope: the authenticated user id (keys are unique per user).
+  scope          String
+  key            String
+  requestMethod  String            @map("request_method")
+  requestPath    String            @map("request_path")
+  requestHash    String            @map("request_hash")
+  status         IdempotencyStatus @default(IN_PROGRESS)
+  responseStatus Int?              @map("response_status")
+  responseBody   Json?             @map("response_body")
+  lockedUntil    DateTime          @map("locked_until")
+  expiresAt      DateTime          @map("expires_at")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  @@unique([scope, key])
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}
+
+// ═══════════════════════════════ Phase 2 ═══════════════════════════════
+
+enum PaymentType {
+  P2P
+  P2P_FX
+  REQUEST
+  QR_MERCHANT
+  QR_P2P
+  REFUND
+}
+
+enum PaymentStatus {
+  CREATED
+  PROCESSING
+  COMPLETED
+  FAILED
+  REVERSED
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+enum PaymentRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  EXPIRED
+}
+
+enum AmountSide {
+  SEND
+  RECEIVE
+}
+
+enum FundingDirection {
+  TOPUP
+  WITHDRAWAL
+}
+
+enum FundingMethod {
+  BANK_TRANSFER
+  CARD
+}
+
+enum FundingStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REVERSED
+}
+
+enum WebhookEventOutcome {
+  APPLIED
+  DEFERRED
+  FLAGGED
+  IGNORED
+  UNMATCHED
+}
+
+enum MerchantStatus {
+  PENDING_REVIEW
+  ACTIVE
+  SUSPENDED
+}
+
+enum KybTier {
+  KYB_0
+  KYB_1
+  KYB_2
+}
+
+enum ResourceStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum QrKind {
+  STATIC_MERCHANT
+  DYNAMIC_MERCHANT
+  P2P_RECEIVE
+}
+
+enum QrStatus {
+  ACTIVE
+  PAID
+  EXPIRED
+  DISABLED
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum SettlementStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum ReconciliationStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum ReconciliationItemType {
+  MISSING_IN_LEDGER
+  MISSING_IN_BANK
+  AMOUNT_MISMATCH
+}
+
+enum SimBankTxnKind {
+  TOPUP
+  PAYOUT
+}
+
+// ─────────────────────────────── Fees ───────────────────────────────
+
+/// Fee schedule per product and currency (minor units). fee = clamp(bps(amount) + fixed, min, max).
+model FeeRule {
+  product   String
+  currency  Currency
+  bps       Int
+  fixed     BigInt   @default(0)
+  min       BigInt   @default(0)
+  /// null = uncapped
+  max       BigInt?
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@id([product, currency])
+  @@map("fee_rules")
+}
+
+// ─────────────────────────────── Payments ───────────────────────────────
+
+/// A money movement between two parties. Status changes follow payment.state.ts and every change
+/// is appended to `timeline`. The journal entry is posted in the same DB transaction that moves
+/// the payment to COMPLETED, so a payment is never COMPLETED without its entry and vice versa.
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  type              PaymentType
+  status            PaymentStatus @default(CREATED)
+  payerUserId       String?       @map("payer_user_id") @db.Uuid
+  payerWalletId     String?       @map("payer_wallet_id") @db.Uuid
+  payeeUserId       String?       @map("payee_user_id") @db.Uuid
+  payeeWalletId     String?       @map("payee_wallet_id") @db.Uuid
+  merchantId        String?       @map("merchant_id") @db.Uuid
+  outletId          String?       @map("outlet_id") @db.Uuid
+  terminalId        String?       @map("terminal_id") @db.Uuid
+  qrCodeId          String?       @map("qr_code_id") @db.Uuid
+  paymentRequestId  String?       @map("payment_request_id") @db.Uuid
+  transferQuoteId   String?       @map("transfer_quote_id") @db.Uuid
+  /// For REFUND payments: the merchant payment being refunded.
+  originalPaymentId String?       @map("original_payment_id") @db.Uuid
+  /// Amount, payer fee and total debit are in `currency` (the payer side).
+  currency          Currency
+  amount            BigInt
+  fee               BigInt        @default(0)
+  totalDebit        BigInt        @map("total_debit")
+  /// Cross-currency payments: what the payee received.
+  receivedCurrency  Currency?     @map("received_currency")
+  receivedAmount    BigInt?       @map("received_amount")
+  /// Merchant discount rate charged to the merchant (merchant payments only).
+  mdrFee            BigInt        @default(0) @map("mdr_fee")
+  refundedAmount    BigInt        @default(0) @map("refunded_amount")
+  reference         String?
+  failureCode       String?       @map("failure_code")
+  failureReason     String?       @map("failure_reason")
+  failureDetails    Json?         @map("failure_details")
+  journalEntryId    String?       @unique @map("journal_entry_id") @db.Uuid
+  reversalEntryId   String?       @unique @map("reversal_entry_id") @db.Uuid
+  /// Business idempotency key (idem:<user>:<Idempotency-Key>); the journal entry carries the same value.
+  externalRef       String        @unique @map("external_ref")
+  /// Fingerprint of the request that created the payment (same key + different request => rejected).
+  requestHash       String        @map("request_hash")
+  /// Single-use QR preview token id. Unique among non-failed payments (partial index in SQL).
+  previewJti        String?       @map("preview_jti")
+  /// Set to the QR id when a single-use QR is paid. UNIQUE, so a single-use QR is paid at most once.
+  singleUseQrId     String?       @unique @map("single_use_qr_id") @db.Uuid
+  settlementId      String?       @map("settlement_id") @db.Uuid
+  timeline          Json          @default("[]")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  completedAt       DateTime?     @map("completed_at")
+
+  @@index([payerUserId, createdAt])
+  @@index([payeeUserId, createdAt])
+  @@index([merchantId, status, completedAt])
+  @@index([status, updatedAt])
+  @@index([settlementId])
+  @@map("payments")
+}
+
+/// Short-lived, single-use priced P2P transfer (same- or cross-currency).
+model TransferQuote {
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @map("user_id") @db.Uuid
+  fromWalletId  String        @map("from_wallet_id") @db.Uuid
+  toUserId      String        @map("to_user_id") @db.Uuid
+  toWalletId    String        @map("to_wallet_id") @db.Uuid
+  fromCurrency  Currency      @map("from_currency")
+  toCurrency    Currency      @map("to_currency")
+  amountSide    AmountSide    @map("amount_side")
+  sendAmount    BigInt        @map("send_amount")
+  receiveAmount BigInt        @map("receive_amount")
+  fee           BigInt
+  feeProduct    String        @map("fee_product")
+  /// Fixed-point x 10^8; null for same-currency quotes.
+  midRate       BigInt?       @map("mid_rate")
+  customerRate  BigInt?       @map("customer_rate")
+  status        FxQuoteStatus @default(OPEN)
+  expiresAt     DateTime      @map("expires_at")
+  paymentId     String?       @unique @map("payment_id") @db.Uuid
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([status, expiresAt])
+  @@map("transfer_quotes")
+}
+
+model PaymentRequest {
+  id          String               @id @default(uuid()) @db.Uuid
+  requesterId String               @map("requester_id") @db.Uuid
+  payerId     String               @map("payer_id") @db.Uuid
+  currency    Currency
+  amount      BigInt
+  note        String?
+  status      PaymentRequestStatus @default(PENDING)
+  expiresAt   DateTime             @map("expires_at")
+  paymentId   String?              @unique @map("payment_id") @db.Uuid
+  timeline    Json                 @default("[]")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+
+  @@index([requesterId, createdAt])
+  @@index([payerId, createdAt])
+  @@index([status, expiresAt])
+  @@map("payment_requests")
+}
+
+// ─────────────────────────────── QR ───────────────────────────────
+
+model QrCode {
+  id         String    @id @default(uuid()) @db.Uuid
+  kind       QrKind
+  status     QrStatus  @default(ACTIVE)
+  merchantId String?   @map("merchant_id") @db.Uuid
+  outletId   String?   @map("outlet_id") @db.Uuid
+  terminalId String?   @map("terminal_id") @db.Uuid
+  /// P2P receive QRs: the receiving user.
+  userId     String?   @map("user_id") @db.Uuid
+  currency   Currency
+  /// null = the payer enters the amount
+  amount     BigInt?
+  reference  String?
+  singleUse  Boolean   @default(false) @map("single_use")
+  keyId      String    @map("key_id")
+  payload    String
+  expiresAt  DateTime? @map("expires_at")
+  paymentId  String?   @unique @map("payment_id") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@index([merchantId, createdAt])
+  @@index([userId, createdAt])
+  @@index([status, expiresAt])
+  @@map("qr_codes")
+}
+
+// ─────────────────────────────── Merchants ───────────────────────────────
+
+model Merchant {
+  id                  String         @id @default(uuid()) @db.Uuid
+  ownerUserId         String         @unique @map("owner_user_id") @db.Uuid
+  businessName        String         @map("business_name")
+  /// ISO 18245 merchant category code (4 digits)
+  category            String
+  registrationNumber  String         @map("registration_number")
+  website             String?
+  status              MerchantStatus @default(PENDING_REVIEW)
+  kybTier             KybTier        @default(KYB_0) @map("kyb_tier")
+  settlementCurrency  Currency       @map("settlement_currency")
+  settlementBank      Json           @map("settlement_bank")
+  settlementDelayDays Int            @map("settlement_delay_days")
+  mdrBps              Int            @map("mdr_bps")
+  /// Merchant payable (LIABILITY): what PayCore owes the merchant until settlement.
+  ledgerAccountId     String         @unique @map("ledger_account_id") @db.Uuid
+  approvedAt          DateTime?      @map("approved_at")
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
+
+  outlets MerchantOutlet[]
+
+  @@index([status, createdAt])
+  @@map("merchants")
+}
+
+model MerchantOutlet {
+  id         String         @id @default(uuid()) @db.Uuid
+  merchantId String         @map("merchant_id") @db.Uuid
+  name       String
+  address    String?
+  status     ResourceStatus @default(ACTIVE)
+  staticQrId String?        @unique @map("static_qr_id") @db.Uuid
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  merchant  Merchant           @relation(fields: [merchantId], references: [id])
+  terminals MerchantTerminal[]
+
+  @@index([merchantId, createdAt])
+  @@map("merchant_outlets")
+}
+
+model MerchantTerminal {
+  id         String         @id @default(uuid()) @db.Uuid
+  outletId   String         @map("outlet_id") @db.Uuid
+  merchantId String         @map("merchant_id") @db.Uuid
+  label      String
+  status     ResourceStatus @default(ACTIVE)
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  outlet MerchantOutlet @relation(fields: [outletId], references: [id])
+
+  @@index([outletId, createdAt])
+  @@map("merchant_terminals")
+}
+
+model Refund {
+  id              String       @id @default(uuid()) @db.Uuid
+  paymentId       String       @map("payment_id") @db.Uuid
+  merchantId      String       @map("merchant_id") @db.Uuid
+  currency        Currency
+  amount          BigInt
+  /// Share of the original MDR returned to the merchant with this refund.
+  mdrRefund       BigInt       @default(0) @map("mdr_refund")
+  status          RefundStatus @default(PENDING)
+  reason          String
+  failureCode     String?      @map("failure_code")
+  failureReason   String?      @map("failure_reason")
+  /// The REFUND payment (payer = merchant, payee = consumer) that carries the journal entry.
+  refundPaymentId String?      @unique @map("refund_payment_id") @db.Uuid
+  journalEntryId  String?      @unique @map("journal_entry_id") @db.Uuid
+  externalRef     String       @unique @map("external_ref")
+  requestHash     String       @map("request_hash")
+  settlementId    String?      @map("settlement_id") @db.Uuid
+  timeline        Json         @default("[]")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  completedAt     DateTime?    @map("completed_at")
+
+  @@index([paymentId])
+  @@index([merchantId, status, completedAt])
+  @@index([settlementId])
+  @@map("refunds")
+}
+
+// ─────────────────────────────── Settlement ───────────────────────────────
+
+model Settlement {
+  id              String           @id @default(uuid()) @db.Uuid
+  merchantId      String           @map("merchant_id") @db.Uuid
+  currency        Currency
+  periodStart     DateTime         @map("period_start")
+  periodEnd       DateTime         @map("period_end")
+  gross           BigInt
+  mdr             BigInt
+  refunds         BigInt
+  net             BigInt
+  status          SettlementStatus @default(PENDING)
+  bankReference   String           @unique @map("bank_reference")
+  journalEntryId  String?          @unique @map("journal_entry_id") @db.Uuid
+  payoutEntryId   String?          @unique @map("payout_entry_id") @db.Uuid
+  reversalEntryId String?          @unique @map("reversal_entry_id") @db.Uuid
+  failureReason   String?          @map("failure_reason")
+  paidAt          DateTime?        @map("paid_at")
+  submittedAt     DateTime?        @map("submitted_at")
+  timeline        Json             @default("[]")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  lines SettlementLine[]
+
+  @@index([merchantId, createdAt])
+  @@index([status, createdAt])
+  @@map("settlements")
+}
+
+model SettlementLine {
+  id           String   @id @default(uuid()) @db.Uuid
+  settlementId String   @map("settlement_id") @db.Uuid
+  /// PAYMENT or REFUND
+  kind         String
+  paymentId    String?  @map("payment_id") @db.Uuid
+  refundId     String?  @map("refund_id") @db.Uuid
+  gross        BigInt
+  mdr          BigInt
+  net          BigInt
+  occurredAt   DateTime @map("occurred_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  settlement Settlement @relation(fields: [settlementId], references: [id])
+
+  @@index([settlementId])
+  @@map("settlement_lines")
+}
+
+// ─────────────────────────────── Funding ───────────────────────────────
+
+/// Money in (TOPUP) or out (WITHDRAWAL) through the bank adapter. Outcomes arrive by webhook.
+model FundingTransaction {
+  id            String           @id @default(uuid()) @db.Uuid
+  userId        String           @map("user_id") @db.Uuid
+  walletId      String           @map("wallet_id") @db.Uuid
+  direction     FundingDirection
+  method        FundingMethod
+  status        FundingStatus    @default(PENDING)
+  currency      Currency
+  amount        BigInt
+  fee           BigInt           @default(0)
+  /// Our end-to-end reference, sent to the bank and echoed back in webhooks and statements.
+  bankReference String           @unique @map("bank_reference")
+  bankAccount   Json?            @map("bank_account")
+  instructions  Json?
+  failureReason String?          @map("failure_reason")
+  /// WITHDRAWAL: funds held at initiation (wallet -> funds in flight)
+  holdEntryId   String?          @unique @map("hold_entry_id") @db.Uuid
+  /// TOPUP: credit on success. WITHDRAWAL: release to the bank on success.
+  settleEntryId String?          @unique @map("settle_entry_id") @db.Uuid
+  submittedAt   DateTime?        @map("submitted_at")
+  needsReview   Boolean          @default(false) @map("needs_review")
+  reviewReason  String?          @map("review_reason")
+  externalRef   String           @unique @map("external_ref")
+  requestHash   String           @map("request_hash")
+  timeline      Json             @default("[]")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@map("funding_transactions")
+}
+
+/// Every verified bank webhook, keyed by the bank event id: a duplicate delivery hits the PK.
+model BankWebhookEvent {
+  /// The bank event id
+  id            String              @id
+  type          String
+  bankReference String              @map("bank_reference")
+  payload       Json
+  outcome       WebhookEventOutcome
+  note          String?
+  signedAt      DateTime            @map("signed_at")
+  receivedAt    DateTime            @default(now()) @map("received_at")
+  /// DEFERRED events are applied later (out-of-order delivery) and stamped here.
+  appliedAt     DateTime?           @map("applied_at")
+
+  @@index([bankReference, receivedAt])
+  @@map("bank_webhook_events")
+}
+
+model ReconciliationRun {
+  id               String               @id @default(uuid()) @db.Uuid
+  /// UTC business date YYYY-MM-DD
+  date             String
+  status           ReconciliationStatus @default(RUNNING)
+  matched          Int                  @default(0)
+  missingInLedger  Int                  @default(0) @map("missing_in_ledger")
+  missingInBank    Int                  @default(0) @map("missing_in_bank")
+  amountMismatches Int                  @default(0) @map("amount_mismatches")
+  triggeredBy      String?              @map("triggered_by")
+  error            String?
+  createdAt        DateTime             @default(now()) @map("created_at")
+  completedAt      DateTime?            @map("completed_at")
+
+  items ReconciliationItem[]
+
+  @@index([date, createdAt])
+  @@map("reconciliation_runs")
+}
+
+model ReconciliationItem {
+  id            String                 @id @default(uuid()) @db.Uuid
+  runId         String                 @map("run_id") @db.Uuid
+  type          ReconciliationItemType
+  bankReference String                 @map("bank_reference")
+  currency      Currency
+  bankAmount    BigInt?                @map("bank_amount")
+  ledgerAmount  BigInt?                @map("ledger_amount")
+  fundingId     String?                @map("funding_id") @db.Uuid
+  settlementId  String?                @map("settlement_id") @db.Uuid
+  createdAt     DateTime               @default(now()) @map("created_at")
+
+  run ReconciliationRun @relation(fields: [runId], references: [id])
+
+  @@index([runId])
+  @@map("reconciliation_items")
+}
+
+// ─────────────────────────────── Outbox ───────────────────────────────
+
+/// Transactional outbox: written in the same DB transaction as the state change it describes,
+/// relayed to BullMQ (or handled inline) by the worker. At-least-once; consumers are idempotent.
+model OutboxEvent {
+  id            String    @id @default(uuid()) @db.Uuid
+  aggregateType String    @map("aggregate_type")
+  aggregateId   String    @map("aggregate_id")
+  eventType     String    @map("event_type")
+  payload       Json
+  availableAt   DateTime  @default(now()) @map("available_at")
+  publishedAt   DateTime? @map("published_at")
+  attempts      Int       @default(0)
+  lastError     String?   @map("last_error")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([publishedAt, availableAt])
+  @@index([aggregateType, aggregateId])
+  @@map("outbox_events")
+}
+
+// ─────────────────────────────── Simulated bank ───────────────────────────────
+
+/// State of the SIMULATED partner bank (what the bank believes). Used only by the simulated
+/// adapter, the dev simulator and reconciliation tests. A real adapter would not use these tables.
+model SimBankTransaction {
+  id        String         @id @default(uuid()) @db.Uuid
+  reference String         @unique
+  kind      SimBankTxnKind
+  currency  Currency
+  amount    BigInt
+  status    FundingStatus  @default(PENDING)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  @@map("sim_bank_transactions")
+}
+
+/// The simulated bank statement: signed movements on the PayCore account at the bank
+/// (+ = money into PayCore, - = money out). Reconciliation compares these with the ledger.
+model SimBankStatementLine {
+  id        String   @id @default(uuid()) @db.Uuid
+  reference String
+  currency  Currency
+  amount    BigInt
+  valueDate String   @map("value_date")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([valueDate])
+  @@index([reference])
+  @@map("sim_bank_statement_lines")
+}

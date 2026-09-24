@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+@import '../styles/tokens.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+@custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+
+/* Tailwind theme: every utility colour maps to a PayCore token. */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-bg: var(--pc-bg);
+  --color-surface: var(--pc-surface);
+  --color-raised: var(--pc-raised);
+  --color-overlay: var(--pc-overlay);
+  --color-border: var(--pc-border);
+  --color-border-strong: var(--pc-border-strong);
+
+  --color-fg: var(--pc-fg);
+  --color-fg-muted: var(--pc-fg-muted);
+  --color-fg-subtle: var(--pc-fg-subtle);
+
+  --color-accent: var(--pc-accent);
+  --color-accent-hover: var(--pc-accent-hover);
+  --color-accent-fg: var(--pc-accent-fg);
+  --color-accent-text: var(--pc-accent-text);
+  --color-accent-tint: var(--pc-accent-tint);
+
+  --color-success: var(--pc-success);
+  --color-success-tint: var(--pc-success-tint);
+  --color-danger: var(--pc-danger);
+  --color-danger-tint: var(--pc-danger-tint);
+  --color-danger-text: var(--pc-danger-text);
+  --color-warning: var(--pc-warning);
+  --color-warning-tint: var(--pc-warning-tint);
+  --color-info: var(--pc-info);
+  --color-info-tint: var(--pc-info-tint);
+
+  --color-chart-1: var(--pc-chart-1);
+  --color-chart-2: var(--pc-chart-2);
+  --color-chart-3: var(--pc-chart-3);
+  --color-chart-4: var(--pc-chart-4);
+  --color-chart-5: var(--pc-chart-5);
+
+  --font-sans: var(--pc-font-sans);
+  --font-mono: var(--pc-font-mono);
+
+  --radius-sm: var(--pc-radius-sm);
+  --radius-md: var(--pc-radius-md);
+  --radius-lg: var(--pc-radius-lg);
+  --radius-xl: var(--pc-radius-xl);
+
+  --shadow-card: var(--pc-shadow);
+  --ease-pc: var(--pc-ease);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--pc-border);
+  }
+
+  html {
+    background: var(--pc-bg);
+    color: var(--pc-fg);
+    font-family: var(--pc-font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html[lang='ur'] {
+    font-family: var(--pc-font-urdu);
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--pc-bg);
+    color: var(--pc-fg);
+  }
+
+  /* Gold focus ring everywhere, keyboard only. */
+  :focus-visible {
+    outline: 2px solid var(--pc-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--pc-accent-tint);
+    color: var(--pc-fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* All money renders with tabular figures so columns line up. */
+  .money {
+    font-family: var(--pc-font-sans);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings:
+      'tnum' 1,
+      'lnum' 1;
+    letter-spacing: -0.01em;
+    unicode-bidi: isolate;
+    direction: ltr;
+  }
+
+  .code {
+    font-family: var(--pc-font-mono);
+    font-variant-numeric: tabular-nums;
+    unicode-bidi: isolate;
+    direction: ltr;
+  }
+
+  .balance-surface {
+    background:
+      radial-gradient(120% 90% at 100% 0%, var(--pc-accent-tint) 0%, transparent 55%),
+      linear-gradient(145deg, var(--pc-balance-from), var(--pc-balance-via) 55%, var(--pc-balance-to));
+  }
+
+  .card-surface {
+    background: linear-gradient(135deg, var(--pc-card-from), var(--pc-card-to));
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--pc-raised) 0%, var(--pc-surface) 50%, var(--pc-raised) 100%);
+    background-size: 200% 100%;
+    animation: pc-shimmer 1.4s ease-in-out infinite;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes pc-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pc-slide-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+@keyframes pc-pop {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+@keyframes pc-slide-in-end {
+  from {
+    transform: translateX(calc(24px * var(--pc-dir, 1)));
+    opacity: 0;
+  }
+}
+:root[dir='rtl'] {
+  --pc-dir: -1;
+}
+
+@keyframes pc-block-rise {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-3px);
+    opacity: 0.75;
+  }
+}
+
+@keyframes pc-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
